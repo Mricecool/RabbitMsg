@@ -1,0 +1,29 @@
+为RabbitMQ安装WEB-STOMP插件
+cd /path/to/your/rabbitmq
+./sbin/rabbitmq-plugins enable rabbitmq_web_stomp
+./sbin/rabbitmq-plugins enable rabbitmq_web_stomp_examples
+./sbin/rabbitmqctl stop
+./sbin/rabbitmqctl start
+./sbin/rabbitmqctl status
+
+
+ 安装用户授权插件
+
+cd /path/to/your/rabbitmq/plugins
+wget <a href="http://www.rabbitmq.com/community-plugins/v3.3.x/rabbitmq_auth_backend_http-3.3.x-e7ac6289.ez">http://www.rabbitmq.com/community-plugins/v3.3.x/rabbitmq_auth_backend_http-3.3.x-e7ac6289.ez</a>
+cd ..
+./sbin/rabbitmq-plugins enable rabbitmq_auth_backend_http
+
+编辑RabbitMQ.Config文件（默认存放于/ECT/RabbitMQ/下），添加：
+[
+ ...
+ {rabbit, [{auth_backends, [rabbit_auth_backend_http]}]},
+ ...
+ {rabbitmq_auth_backend_http,
+ [{user_path, “http://your-server/auth/user”},
+ {vhost_path, “http://your-server/auth/vhost”},
+ {resource_path, “http://your-server/auth/resource”}
+ ]}
+ ...
+].
+其中，User_Path是根据用户名密码进行校验，VHOST_Path是校验是否有权限访问VHOST， Resource_Path是校验用户对传入的Exchange、Queue是否有权限
